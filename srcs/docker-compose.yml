@@ -1,5 +1,6 @@
 services:
   mariadb:
+    image: inception-mariadb:bookworm
     build:
       context: ./requirements/mariadb
     env_file:
@@ -18,6 +19,7 @@ services:
     restart: unless-stopped
 
   wordpress:
+    image: inception-wordpress:bookworm
     build:
       context: ./requirements/wordpress
     depends_on:
@@ -40,6 +42,7 @@ services:
     restart: unless-stopped
 
   nginx:
+    image: inception-nginx:bookworm
     build:
       context: ./requirements/nginx
     depends_on:
