@@ -3,19 +3,12 @@ services:
     image: inception-mariadb:bookworm
     build:
       context: ./requirements/mariadb
-    env_file:
-      - ./.env
     secrets:
       - mysql_password
     volumes:
       - ${DATA_DIR:-/home/bamdjar/data}/mariadb:/var/lib/mysql
     networks:
       - inception
-    healthcheck:
-      test: ["CMD-SHELL", "mariadb -h 127.0.0.1 -u$$MYSQL_USER -p\"$$(cat /run/secrets/mysql_password)\" -e 'SELECT 1' >/dev/null 2>&1"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
     restart: unless-stopped
 
   wordpress:
@@ -25,8 +18,6 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
-    env_file:
-      - ./.env
     environment:
       WORDPRESS_DB_HOST: mariadb:3306
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
