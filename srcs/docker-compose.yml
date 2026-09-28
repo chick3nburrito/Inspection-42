@@ -9,7 +9,7 @@ services:
       - db_root_password
       - db_password
     volumes:
-      - /home/bamdjar/data/mariadb:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
     networks:
       - inception
     restart: unless-stopped
@@ -27,7 +27,7 @@ services:
       - wp_admin_password
       - wp_user_password
     volumes:
-      - /home/bamdjar/data/wordpress:/var/www/html
+      - wordpress_data:/var/www/html
     networks:
       - inception
     restart: unless-stopped
@@ -41,7 +41,7 @@ services:
     ports:
       - "443:443"
     volumes:
-      - /home/bamdjar/data/wordpress:/var/www/html:ro
+      - wordpress_data:/var/www/html:ro
     networks:
       - inception
     restart: unless-stopped
@@ -49,6 +49,20 @@ services:
 networks:
   inception:
     driver: bridge
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/bamdjar/data/mariadb
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/bamdjar/data/wordpress
 
 secrets:
   db_root_password:

@@ -3,8 +3,12 @@ COMPOSE = docker compose -f srcs/docker-compose.yml
 
 all: up
 
-up:
+up: data
 	$(COMPOSE) up --build -d
+
+data:
+	sudo mkdir -p /home/bamdjar/data/mariadb
+	sudo mkdir -p /home/bamdjar/data/wordpress
 
 build:
 	$(COMPOSE) build
@@ -19,8 +23,4 @@ restart: down up
 
 clean: down
 
-config:
-	$(COMPOSE) config
-
-	
-.PHONY: all up build down stop restart clean config
+.PHONY: all up data build down stop restart clean
