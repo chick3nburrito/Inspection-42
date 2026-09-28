@@ -3,10 +3,13 @@ services:
     image: inception-mariadb:bookworm
     build:
       context: ./requirements/mariadb
+    env_file:
+      - ./.env
     secrets:
-      - mysql_password
+      - db_root_password
+      - db_password
     volumes:
-      - ${DATA_DIR:-/home/bamdjar/data}/mariadb:/var/lib/mysql
+      - /home/bamdjar/data/mariadb:/var/lib/mysql
     networks:
       - inception
     restart: unless-stopped
@@ -16,18 +19,15 @@ services:
     build:
       context: ./requirements/wordpress
     depends_on:
-      mariadb:
-        condition: service_healthy
-    environment:
-      WORDPRESS_DB_HOST: mariadb:3306
-      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
-      WORDPRESS_DB_USER: ${MYSQL_USER}
+      - mariadb
+    env_file:
+      - ./.env
     secrets:
-      - mysql_password
+      - db_password
       - wp_admin_password
       - wp_user_password
     volumes:
-      - ${DATA_DIR:-/home/bamdjar/data}/wordpress:/var/www/html
+      - /home/bamdjar/data/wordpress:/var/www/html
     networks:
       - inception
     restart: unless-stopped
@@ -41,7 +41,7 @@ services:
     ports:
       - "443:443"
     volumes:
-      - ${DATA_DIR:-/home/bamdjar/data}/wordpress:/var/www/html:ro
+      - /home/bamdjar/data/wordpress:/var/www/html:ro
     networks:
       - inception
     restart: unless-stopped
@@ -51,9 +51,11 @@ networks:
     driver: bridge
 
 secrets:
-  mysql_password:
-    file: ./secrets/mysql_password.txt
+  db_root_password:
+    file: ../secrets/mysql_password.txt
+  db_password:
+    file: ../secrets/mysql_password.txt
   wp_admin_password:
-    file: ./secrets/wp_admin_password.txt
+    file: ../secrets/wp_admin_password.txt
   wp_user_password:
-    file: ./secrets/wp_user_password.txt
+    file: ../secrets/wp_user_password.txt

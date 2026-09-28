@@ -6,17 +6,17 @@ RUN apt-get update && \
 		curl \
 		mariadb-client \
 		php-cli \
-		php-curl \
 		php-fpm \
 		php-mysql \
 		tar && \
 	rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /run/php
-
+RUN curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+	-o /usr/local/bin/wp && \
+	chmod 755 /usr/local/bin/wp && \
+	mkdir -p /run/php
 
 COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
-
 COPY tools/setup.sh /usr/local/bin/setup.sh
 
 RUN chmod 755 /usr/local/bin/setup.sh
